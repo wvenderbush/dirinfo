@@ -5,61 +5,55 @@
 #include <sys/types.h>
 
 void fileSizer(long bytes){
-	printf("File Size: ");
-	long workbytes = bytes;
-	if (bytes > 1024 * 1024 * 1024){
-		printf("%li gigabytes, ", workbytes>>30);
-		workbytes = workbytes%1024;
-	}
-	if (bytes > 1024 * 1024){
-		printf("%li megabytes, ", workbytes>>20);
-		workbytes = workbytes%1024;
-	}
-	if (bytes > 1024){
-		printf("%li kilobytes, ", workbytes>>10);
-		workbytes = workbytes%1024;
-	}
-	printf("%li bytes\n", workbytes);
+  printf("File Size: ");
+  long workbytes = bytes;
+  if (bytes > 1024 * 1024 * 1024){
+    printf("%li gigabytes, ", workbytes>>30);
+    workbytes = workbytes%1024;
+  }
+  if (bytes > 1024 * 1024){
+    printf("%li megabytes, ", workbytes>>20);
+    workbytes = workbytes%1024;
+  }
+  if (bytes > 1024){
+    printf("%li kilobytes, ", workbytes>>10);
+    workbytes = workbytes%1024;
+  }
+  printf("%li bytes\n", workbytes);
 }
 
 int main(){
-	printf("Statistics for Directory: \n\n");
+  printf("Statistics for Directory: \n\n");
 
-	struct stat buffer;
-	int debug; //= stat("..", &buffer);
+  int total = 0;
+  struct stat buf;
 
-	//while ()
-
-	long total;
-
-	struct dirent *pdirent;
-	DIR *pDir;
-	pDir = opendir(".");
-	if (pDir)
+  struct dirent *pdirent;
+  DIR *pDir;
+  pDir = opendir(".");
+  if (pDir)
+    {
+      printf("Directories: \n------------\n");
+      while ((pdirent = readdir(pDir)) != NULL)
 	{
-		printf("Directories: \n------------\n");
-		while ((pdirent = readdir(pDir)) != NULL)
-		{
-			if (pdirent->d_type == 4){
-				printf("%s\n", pdirent->d_name);
-				debug = stat(pdirent->d_name, &buffer);
-				total += buffer.st_size;
-			}
-		}
-		printf("\n");
-		pDir = opendir(".");
-		printf("Files: \n------\n");
-		while ((pdirent = readdir(pDir)) != NULL)
-		{
-			if (pdirent->d_type == 8){
-				printf("%s\n", pdirent->d_name);
-				debug = stat(pdirent->d_name, &buffer);
-				total += buffer.st_size;
-			}
-		}
-
-		closedir(pDir);
+	  if (pdirent->d_type == 4){
+	    printf("%s\n", pdirent->d_name);
+	  }
 	}
-	fileSizer(total);
-	return(0);
+      printf("\n");
+      pDir = opendir(".");
+      printf("Files: \n------\n");
+      while ((pdirent = readdir(pDir)) != NULL)
+	{
+	  if (pdirent->d_type == 8){
+	    printf("%s\n", pdirent->d_name);
+	    stat(pdirent->d_name, &buf);
+	    total += buf.st_size;
+	  }
+	}
+      closedir(pDir);
+    }
+  fileSizer(total);
+  //printf("%d\n", total);
+  return(0);
 }
