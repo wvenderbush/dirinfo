@@ -26,8 +26,8 @@ int main(){
   printf("Statistics for Directory: \n\n");
 
   int total = 0;
-  struct stat buf;
-
+  int size;
+  
   struct dirent *pdirent;
   DIR *pDir;
   pDir = opendir(".");
@@ -38,6 +38,11 @@ int main(){
 	{
 	  if (pdirent->d_type == 4){
 	    printf("%s\n", pdirent->d_name);
+	    struct stat buf;
+	    stat(pdirent->d_name, &buf);
+	    size = buf.st_size;
+	    //printf("%d\n", size);
+	    total += size;
 	  }
 	}
       printf("\n");
@@ -47,13 +52,16 @@ int main(){
 	{
 	  if (pdirent->d_type == 8){
 	    printf("%s\n", pdirent->d_name);
+	    struct stat buf;
 	    stat(pdirent->d_name, &buf);
-	    total += buf.st_size;
+	    size = buf.st_size;
+	    //printf("%d\n", size);
+	    total += size;
 	  }
 	}
       closedir(pDir);
     }
   fileSizer(total);
-  //printf("%d\n", total);
+  printf("%d\n", total);
   return(0);
 }
